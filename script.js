@@ -12,14 +12,14 @@ resizeCanvas()
 const light = {
   x: canvas.width / 2,
   y: canvas.height / 2,
-  rays: 720,
+  rays: 180,
   radius: 5,
 }
 
 let isDraggingLight = false
 
 function drawRays(light) {
-  const maxLength = Math.max(canvas.width, canvas.height)
+  const maxLength = Math.hypot(canvas.width, canvas.height)
   ctx.strokeStyle = 'rgba(255, 255, 200, 0.3)'
   ctx.lineWidth = 1
 
