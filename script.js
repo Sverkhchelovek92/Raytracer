@@ -12,9 +12,11 @@ resizeCanvas()
 const light = {
   x: canvas.width / 2,
   y: canvas.height / 2,
-  rays: 180,
+  rays: 720,
   radius: 5,
 }
+
+let isDraggingLight = false
 
 function drawRays(light) {
   const maxLength = Math.max(canvas.width, canvas.height)
@@ -41,11 +43,50 @@ function drawLight(light) {
   ctx.fill()
 }
 
+function isMouseOnLight(mouseX, mouseY, light) {
+  const dx = mouseX - light.x
+  const dy = mouseY - light.y
+  return Math.sqrt(dx * dx + dy * dy) <= light.radius
+}
+
+function getMousePos(e) {
+  const rect = canvas.getBoundingClientRect()
+  return {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top,
+  }
+}
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   drawRays(light)
   drawLight(light)
 }
+
+canvas.addEventListener('mousedown', (e) => {
+  const { x, y } = getMousePos(e)
+
+  if (isMouseOnLight(x, y, light)) {
+    isDraggingLight = true
+  }
+})
+
+canvas.addEventListener('mousemove', (e) => {
+  const { x, y } = getMousePos(e)
+
+  // меняем курсор
+  canvas.style.cursor = isMouseOnLight(x, y, light) ? 'pointer' : 'default'
+
+  if (isDraggingLight) {
+    light.x = x
+    light.y = y
+    draw()
+  }
+})
+
+canvas.addEventListener('mouseup', () => {
+  isDraggingLight = false
+})
 
 draw()
