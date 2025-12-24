@@ -12,7 +12,7 @@ resizeCanvas()
 const light = {
   x: canvas.width / 2,
   y: canvas.height / 2,
-  rays: 180,
+  rays: 360,
   radius: 5,
 }
 
@@ -20,18 +20,45 @@ let isDraggingLight = false
 
 function drawRays(light) {
   const maxLength = Math.hypot(canvas.width, canvas.height)
+
   ctx.strokeStyle = 'rgba(255, 255, 200, 0.3)'
   ctx.lineWidth = 1
 
   for (let i = 0; i < light.rays; i++) {
     const angle = (i / light.rays) * Math.PI * 2
 
-    const dx = Math.cos(angle)
-    const dy = Math.sin(angle)
+    const rayDir = {
+      x: Math.cos(angle),
+      y: Math.sin(angle),
+    }
+
+    let closestIntersection = null
+    let minT = Infinity
+
+    // check intersection
+    for (const wall of walls) {
+      const hit = raySegmentIntersection(
+        { x: light.x, y: light.y },
+        rayDir,
+        wall.a,
+        wall.b
+      )
+
+      if (hit && hit.t < minT) {
+        minT = hit.t
+        closestIntersection = hit
+      }
+    }
 
     ctx.beginPath()
     ctx.moveTo(light.x, light.y)
-    ctx.lineTo(light.x + dx * maxLength, light.y + dy * maxLength)
+
+    if (closestIntersection) {
+      ctx.lineTo(closestIntersection.x, closestIntersection.y)
+    } else {
+      ctx.lineTo(light.x + rayDir.x * maxLength, light.y + rayDir.y * maxLength)
+    }
+
     ctx.stroke()
   }
 }
@@ -59,9 +86,9 @@ function getMousePos(e) {
 
 // Walls array
 const walls = [
-  { a: { x: 100, y: 100 }, b: { x: 800, y: 120 } },
-  { a: { x: 500, y: 120 }, b: { x: 350, y: 400 } },
-  { a: { x: 300, y: 350 }, b: { x: 900, y: 465 } },
+  { a: { x: 100, y: 100 }, b: { x: 500, y: 120 } },
+  { a: { x: 600, y: 200 }, b: { x: 650, y: 300 } },
+  { a: { x: 250, y: 450 }, b: { x: 800, y: 465 } },
 ]
 
 function drawWalls() {
