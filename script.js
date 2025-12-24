@@ -57,11 +57,31 @@ function getMousePos(e) {
   }
 }
 
+// Walls array
+const walls = [
+  { a: { x: 100, y: 100 }, b: { x: 800, y: 120 } },
+  { a: { x: 500, y: 120 }, b: { x: 350, y: 400 } },
+  { a: { x: 300, y: 350 }, b: { x: 900, y: 465 } },
+]
+
+function drawWalls() {
+  ctx.strokeStyle = '#888'
+  ctx.lineWidth = 2
+
+  for (const wall of walls) {
+    ctx.beginPath()
+    ctx.moveTo(wall.a.x, wall.a.y)
+    ctx.lineTo(wall.b.x, wall.b.y)
+    ctx.stroke()
+  }
+}
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   drawRays(light)
   drawLight(light)
+  drawWalls()
 }
 
 canvas.addEventListener('mousedown', (e) => {
