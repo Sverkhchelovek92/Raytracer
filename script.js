@@ -6,15 +6,27 @@ function resizeCanvas() {
   canvas.height = canvas.clientHeight
 }
 
-window.addEventListener('resize', resizeCanvas)
+window.addEventListener('resize', () => {
+  resizeCanvas()
+  updateLightPosition()
+  draw()
+})
+
 resizeCanvas()
 
 const light = {
-  x: canvas.width / 2,
-  y: canvas.height / 2,
+  // x: canvas.width / 2,
+  // y: canvas.height / 2,
   rays: 720,
   radius: 5,
 }
+
+function updateLightPosition() {
+  light.x = canvas.width / 2
+  light.y = canvas.height / 2
+}
+
+updateLightPosition()
 
 let isDraggingLight = false
 
@@ -104,36 +116,6 @@ function drawWalls() {
 }
 
 function raySegmentIntersection(rayOrigin, rayDir, a, b) {
-  // const r_px = rayOrigin.x
-  // const r_py = rayOrigin.y
-  // const r_dx = rayDir.x
-  // const r_dy = rayDir.y
-
-  // const s_px = a.x
-  // const s_py = a.y
-  // const s_dx = b.x - a.x
-  // const s_dy = b.y - a.y
-
-  // const r_mag = Math.hypot(r_dx, r_dy)
-  // const s_mag = Math.hypot(s_dx, s_dy)
-
-  // if (r_dx / r_mag === s_dx / s_mag && r_dy / r_mag === s_dy / s_mag) {
-  //   return null
-  // }
-  // const T2 =
-  //   (r_dx * (s_py - r_py) + r_dy * (r_px - s_px)) / (s_dx * r_dy - s_dy * r_dx)
-
-  // const T1 = (s_px + s_dx * T2 - r_px) / r_dx
-
-  // if (T1 < 0) return null
-  // if (T2 < 0 || T2 > 1) return null
-
-  // return {
-  //   x: r_px + r_dx * T1,
-  //   y: r_py + r_dy * T1,
-  //   t: T1,
-  // }
-
   const dx = b.x - a.x
   const dy = b.y - a.y
 
