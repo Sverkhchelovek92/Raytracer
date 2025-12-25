@@ -6,19 +6,9 @@ function resizeCanvas() {
   canvas.height = canvas.clientHeight
 }
 
-window.addEventListener('resize', () => {
-  resizeCanvas()
-  updateLightPosition()
-  draw()
-})
-
-resizeCanvas()
-
 const light = {
-  // x: canvas.width / 2,
-  // y: canvas.height / 2,
   rays: 720,
-  radius: 5,
+  radius: 10,
 }
 
 function updateLightPosition() {
@@ -26,6 +16,13 @@ function updateLightPosition() {
   light.y = canvas.height / 2
 }
 
+window.addEventListener('resize', () => {
+  resizeCanvas()
+  updateLightPosition()
+  draw()
+})
+
+resizeCanvas()
 updateLightPosition()
 
 let isDraggingLight = false
