@@ -12,7 +12,7 @@ resizeCanvas()
 const light = {
   x: canvas.width / 2,
   y: canvas.height / 2,
-  rays: 360,
+  rays: 720,
   radius: 5,
 }
 
@@ -88,7 +88,7 @@ function getMousePos(e) {
 const walls = [
   { a: { x: 100, y: 100 }, b: { x: 500, y: 120 } },
   { a: { x: 600, y: 200 }, b: { x: 650, y: 300 } },
-  { a: { x: 250, y: 450 }, b: { x: 800, y: 465 } },
+  // { a: { x: 250, y: 450 }, b: { x: 800, y: 465 } },
 ]
 
 function drawWalls() {
@@ -104,43 +104,63 @@ function drawWalls() {
 }
 
 function raySegmentIntersection(rayOrigin, rayDir, a, b) {
-  const r_px = rayOrigin.x
-  const r_py = rayOrigin.y
-  const r_dx = rayDir.x
-  const r_dy = rayDir.y
+  // const r_px = rayOrigin.x
+  // const r_py = rayOrigin.y
+  // const r_dx = rayDir.x
+  // const r_dy = rayDir.y
 
-  const s_px = a.x
-  const s_py = a.y
-  const s_dx = b.x - a.x
-  const s_dy = b.y - a.y
+  // const s_px = a.x
+  // const s_py = a.y
+  // const s_dx = b.x - a.x
+  // const s_dy = b.y - a.y
 
-  const r_mag = Math.hypot(r_dx, r_dy)
-  const s_mag = Math.hypot(s_dx, s_dy)
+  // const r_mag = Math.hypot(r_dx, r_dy)
+  // const s_mag = Math.hypot(s_dx, s_dy)
 
-  if (r_dx / r_mag === s_dx / s_mag && r_dy / r_mag === s_dy / s_mag) {
-    return null
+  // if (r_dx / r_mag === s_dx / s_mag && r_dy / r_mag === s_dy / s_mag) {
+  //   return null
+  // }
+  // const T2 =
+  //   (r_dx * (s_py - r_py) + r_dy * (r_px - s_px)) / (s_dx * r_dy - s_dy * r_dx)
+
+  // const T1 = (s_px + s_dx * T2 - r_px) / r_dx
+
+  // if (T1 < 0) return null
+  // if (T2 < 0 || T2 > 1) return null
+
+  // return {
+  //   x: r_px + r_dx * T1,
+  //   y: r_py + r_dy * T1,
+  //   t: T1,
+  // }
+
+  const dx = b.x - a.x
+  const dy = b.y - a.y
+
+  const denominator = rayDir.x * dy - rayDir.y * dx
+  if (Math.abs(denominator) < 1e-6) return null
+
+  const t = ((a.x - rayOrigin.x) * dy - (a.y - rayOrigin.y) * dx) / denominator
+  const u =
+    ((a.x - rayOrigin.x) * rayDir.y - (a.y - rayOrigin.y) * rayDir.x) /
+    denominator
+
+  if (t >= 0 && u >= 0 && u <= 1) {
+    return {
+      x: rayOrigin.x + rayDir.x * t,
+      y: rayOrigin.y + rayDir.y * t,
+      t: t,
+    }
   }
-  const T2 =
-    (r_dx * (s_py - r_py) + r_dy * (r_px - s_px)) / (s_dx * r_dy - s_dy * r_dx)
-
-  const T1 = (s_px + s_dx * T2 - r_px) / r_dx
-
-  if (T1 < 0) return null
-  if (T2 < 0 || T2 > 1) return null
-
-  return {
-    x: r_px + r_dx * T1,
-    y: r_py + r_dy * T1,
-    t: T1,
-  }
+  return null
 }
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   drawRays(light)
-  drawLight(light)
   drawWalls()
+  drawLight(light)
 }
 
 canvas.addEventListener('mousedown', (e) => {
