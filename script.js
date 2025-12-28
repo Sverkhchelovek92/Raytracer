@@ -72,6 +72,76 @@ function drawRays(light) {
   }
 }
 
+function drawLightArea(light) {
+  const points = []
+  const maxLength = Math.hypot(canvas.width, canvas.height) * 1.5
+
+  // let's collect ending points of rays
+
+  for (let i = 0; i < light.rays; i++) {
+    const angle = (i / light.rays) * Math.PI * 2
+    const rayDir = {
+      x: Math.cos(angle),
+      y: Math.sin(angle),
+    }
+
+    let closestIntersection = null
+    let minT = Infinity
+
+    for (const wall of walls) {
+      const hit = raySegmentIntersection(light, rayDir, wall.a, wall.b)
+      if (hit && hit.t < minT) {
+        minT = hit.t
+        closestIntersection = hit
+      }
+    }
+
+    let endPoint
+    if (closestIntersection) {
+      endPoint = closestIntersection
+    } else {
+      endPoint = {
+        x: light.x + rayDir.x * maxLength,
+        y: light.y + rayDir.y * maxLength,
+      }
+    }
+
+    points.push({
+      x: endPoint.x,
+      y: endPoint.y,
+      angle: angle,
+    })
+  }
+
+  // let's sort for some reason
+  points.sort((a, b) => a.angle - b.angle)
+
+  // let's make gradient
+  const gradient = ctx.createRadialGradient(
+    light.x,
+    light.y,
+    0,
+    light.x,
+    light.y,
+    maxLength
+  )
+  gradient.addColorStop(0, 'rgba(255, 255, 180, 0.8)')
+  gradient.addColorStop(0.4, 'rgba(255, 220, 100, 0.4)')
+  gradient.addColorStop(0.7, 'rgba(255, 200, 50, 0.1)')
+  gradient.addColorStop(1, 'rgba(255, 180, 0, 0)')
+
+  ctx.fillStyle = gradient
+
+  // let's draw this stuff
+  ctx.beginPath()
+  ctx.moveTo(points[0].x, points[0].y)
+  for (let i = 1; i < points.length; i++) {
+    ctx.lineTo(points[i].x, points[i].y)
+  }
+  ctx.closePath()
+  ctx.fill()
+}
+
 function drawLight(light) {
   ctx.fillStyle = 'yellow'
   ctx.beginPath()
