@@ -207,7 +207,10 @@ function raySegmentIntersection(rayOrigin, rayDir, a, b) {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  drawRays(light)
+  // drawRays(light)
+
+  drawLightArea(light)
+
   drawWalls()
   drawLight(light)
 }
