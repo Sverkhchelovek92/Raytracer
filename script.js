@@ -113,14 +113,9 @@ function drawLightArea(light) {
       }
     }
 
-    let endPoint
-    if (closestIntersection) {
-      endPoint = closestIntersection
-    } else {
-      endPoint = {
-        x: light.x + rayDir.x * maxLength,
-        y: light.y + rayDir.y * maxLength,
-      }
+    let endPoint = closestIntersection || {
+      x: light.x + rayDir.x * maxLength,
+      y: light.y + rayDir.y * maxLength,
     }
 
     points.push({
@@ -142,10 +137,19 @@ function drawLightArea(light) {
     light.y,
     maxLength
   )
+  // Gradient Ver. 1
+
   gradient.addColorStop(0, 'rgba(255, 255, 180, 0.8)')
   gradient.addColorStop(0.4, 'rgba(255, 220, 100, 0.4)')
   gradient.addColorStop(0.7, 'rgba(255, 200, 50, 0.1)')
   gradient.addColorStop(1, 'rgba(255, 180, 0, 0)')
+
+  // Gradien Ver. 2
+
+  // gradient.addColorStop(0, light.color)
+  // gradient.addColorStop(0.4, light.color.replace(/[\d.]+\)$/, '0.4)'))
+  // gradient.addColorStop(0.7, light.color.replace(/[\d.]+\)$/, '0.1)'))
+  // gradient.addColorStop(1, light.color.replace(/[\d.]+\)$/, '0)'))
 
   ctx.fillStyle = gradient
 
