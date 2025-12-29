@@ -11,6 +11,23 @@ const light = {
   radius: 10,
 }
 
+let lights = [
+  {
+    x: canvas.width / 3,
+    y: canvas.height / 2,
+    color: 'rgba(255, 255, 180, 0.8)',
+    rays: 720,
+    radius: 12,
+  },
+  {
+    x: (canvas.width * 2) / 3,
+    y: canvas.height / 3,
+    color: 'rgba(180, 220, 255, 0.8)',
+    rays: 720,
+    radius: 12,
+  },
+]
+
 function updateLightPosition() {
   light.x = canvas.width / 2
   light.y = canvas.height / 2
