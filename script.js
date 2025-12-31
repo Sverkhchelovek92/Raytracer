@@ -6,206 +6,57 @@ function resizeCanvas() {
   canvas.height = canvas.clientHeight
 }
 
-const light = {
-  rays: 720,
-  radius: 10,
-}
+// Lights and Walls
 
-let lights = [
-  {
-    x: canvas.width / 3,
-    y: canvas.height / 2,
-    color: 'rgba(255, 255, 180, 0.8)',
-    rays: 720,
-    radius: 12,
-  },
-  {
-    x: (canvas.width * 2) / 3,
-    y: canvas.height / 3,
-    color: 'rgba(180, 220, 255, 0.8)',
-    rays: 720,
-    radius: 12,
-  },
-]
-
-function updateLightPosition() {
-  light.x = canvas.width / 2
-  light.y = canvas.height / 2
-}
-
-window.addEventListener('resize', () => {
-  resizeCanvas()
-  updateLightPosition()
-  draw()
-})
-
-resizeCanvas()
-updateLightPosition()
-
-let isDraggingLight = false
-
-function drawRays(light) {
-  const maxLength = Math.hypot(canvas.width, canvas.height)
-
-  ctx.strokeStyle = 'rgba(255, 255, 200, 0.3)'
-  ctx.lineWidth = 1
-
-  for (let i = 0; i < light.rays; i++) {
-    const angle = (i / light.rays) * Math.PI * 2
-
-    const rayDir = {
-      x: Math.cos(angle),
-      y: Math.sin(angle),
-    }
-
-    let closestIntersection = null
-    let minT = Infinity
-
-    // check intersection
-    for (const wall of walls) {
-      const hit = raySegmentIntersection(
-        { x: light.x, y: light.y },
-        rayDir,
-        wall.a,
-        wall.b
-      )
-
-      if (hit && hit.t < minT) {
-        minT = hit.t
-        closestIntersection = hit
-      }
-    }
-
-    ctx.beginPath()
-    ctx.moveTo(light.x, light.y)
-
-    if (closestIntersection) {
-      ctx.lineTo(closestIntersection.x, closestIntersection.y)
-    } else {
-      ctx.lineTo(light.x + rayDir.x * maxLength, light.y + rayDir.y * maxLength)
-    }
-
-    ctx.stroke()
-  }
-}
-
-function drawLightArea(light) {
-  const points = []
-  const maxLength = Math.hypot(canvas.width, canvas.height) * 1.5
-
-  // let's collect ending points of rays
-
-  for (let i = 0; i < light.rays; i++) {
-    const angle = (i / light.rays) * Math.PI * 2
-    const rayDir = {
-      x: Math.cos(angle),
-      y: Math.sin(angle),
-    }
-
-    let closestIntersection = null
-    let minT = Infinity
-
-    for (const wall of walls) {
-      const hit = raySegmentIntersection(light, rayDir, wall.a, wall.b)
-      if (hit && hit.t < minT) {
-        minT = hit.t
-        closestIntersection = hit
-      }
-    }
-
-    let endPoint = closestIntersection || {
-      x: light.x + rayDir.x * maxLength,
-      y: light.y + rayDir.y * maxLength,
-    }
-
-    points.push({
-      x: endPoint.x,
-      y: endPoint.y,
-      angle: angle,
-    })
-  }
-
-  // let's sort for some reason
-  points.sort((a, b) => a.angle - b.angle)
-
-  // let's make gradient
-  const gradient = ctx.createRadialGradient(
-    light.x,
-    light.y,
-    0,
-    light.x,
-    light.y,
-    maxLength
-  )
-  // Gradient Ver. 1
-
-  gradient.addColorStop(0, 'rgba(255, 255, 180, 0.8)')
-  gradient.addColorStop(0.4, 'rgba(255, 220, 100, 0.4)')
-  gradient.addColorStop(0.7, 'rgba(255, 200, 50, 0.1)')
-  gradient.addColorStop(1, 'rgba(255, 180, 0, 0)')
-
-  // Gradien Ver. 2
-
-  // gradient.addColorStop(0, light.color)
-  // gradient.addColorStop(0.4, light.color.replace(/[\d.]+\)$/, '0.4)'))
-  // gradient.addColorStop(0.7, light.color.replace(/[\d.]+\)$/, '0.1)'))
-  // gradient.addColorStop(1, light.color.replace(/[\d.]+\)$/, '0)'))
-
-  ctx.fillStyle = gradient
-
-  // let's draw this stuff
-  ctx.beginPath()
-  ctx.moveTo(points[0].x, points[0].y)
-  for (let i = 1; i < points.length; i++) {
-    ctx.lineTo(points[i].x, points[i].y)
-  }
-  ctx.closePath()
-  ctx.fill()
-}
-
-function drawLight(light) {
-  ctx.fillStyle = 'white'
-  ctx.beginPath()
-  ctx.arc(light.x, light.y, light.radius, 0, Math.PI * 2)
-  ctx.fill()
-
-  ctx.strokeStyle = 'black'
-  ctx.lineWidth = 1
-  ctx.stroke()
-}
-
-function isMouseOnLight(mouseX, mouseY, light) {
-  const dx = mouseX - light.x
-  const dy = mouseY - light.y
-  return Math.sqrt(dx * dx + dy * dy) <= light.radius
-}
-
-function getMousePos(e) {
-  const rect = canvas.getBoundingClientRect()
-  return {
-    x: e.clientX - rect.left,
-    y: e.clientY - rect.top,
-  }
-}
-
-// Walls array
-const walls = [
+let lights = []
+let walls = [
   { a: { x: 100, y: 100 }, b: { x: 500, y: 120 } },
   { a: { x: 600, y: 200 }, b: { x: 650, y: 300 } },
   // { a: { x: 250, y: 450 }, b: { x: 800, y: 465 } },
 ]
 
-function drawWalls() {
-  ctx.strokeStyle = '#888'
-  ctx.lineWidth = 2
+function updateLightsAndBoundaries() {
+  // Update lights
+  lights = [
+    {
+      x: canvas.width / 4,
+      y: canvas.height / 2,
+      color: 'rgba(255, 240, 180',
+      range: 600,
+      rays: 1000,
+      radius: 14,
+    },
+    {
+      x: (canvas.width * 3) / 4,
+      y: canvas.height / 2,
+      color: 'rgba(180, 220, 255',
+      range: 600,
+      rays: 1000,
+      radius: 14,
+    },
+  ]
+  // Delete old walls
+  walls = walls.filter((w) => !w.isBoundary)
 
-  for (const wall of walls) {
-    ctx.beginPath()
-    ctx.moveTo(wall.a.x, wall.a.y)
-    ctx.lineTo(wall.b.x, wall.b.y)
-    ctx.stroke()
-  }
+  // New walls
+  const w = canvas.width
+  const h = canvas.height
+  walls.push(
+    { a: { x: 0, y: 0 }, b: { x: w, y: 0 }, isBoundary: true },
+    { a: { x: w, y: 0 }, b: { x: w, y: h }, isBoundary: true },
+    { a: { x: w, y: h }, b: { x: 0, y: h }, isBoundary: true },
+    { a: { x: 0, y: h }, b: { x: 0, y: 0 }, isBoundary: true }
+  )
 }
+
+window.addEventListener('resize', () => {
+  resizeCanvas()
+  updateLightsAndBoundaries()
+  draw()
+})
+
+resizeCanvas()
+updateLightsAndBoundaries()
 
 function raySegmentIntersection(rayOrigin, rayDir, a, b) {
   const dx = b.x - a.x
@@ -229,18 +80,103 @@ function raySegmentIntersection(rayOrigin, rayDir, a, b) {
   return null
 }
 
+function drawLightArea(light) {
+  const points = []
+  const maxDist = light.range
+
+  // let's collect ending points of rays
+
+  for (let i = 0; i < light.rays; i++) {
+    const angle = (i / light.rays) * Math.PI * 2
+    const rayDir = { x: Math.cos(angle), y: Math.sin(angle) }
+
+    let closest = null
+    let minT = Infinity
+
+    for (const wall of walls) {
+      const hit = raySegmentIntersection(light, rayDir, wall.a, wall.b)
+      if (hit && hit.t < minT) {
+        minT = hit.t
+        closest = hit
+      }
+    }
+
+    let endPoint
+    if (closest && minT <= maxDist) {
+      endPoint = closest
+    } else {
+      endPoint = {
+        x: light.x + rayDir.x * maxDist,
+        y: light.y + rayDir.y * maxDist,
+      }
+    }
+
+    points.push({ x: endPoint.x, y: endPoint.y, angle })
+  }
+
+  // let's sort for some reason
+  points.sort((a, b) => a.angle - b.angle)
+
+  // let's make gradient
+  const gradient = ctx.createRadialGradient(
+    light.x,
+    light.y,
+    0,
+    light.x,
+    light.y,
+    maxDist
+  )
+  // Gradient
+
+  gradient.addColorStop(0, light.color + ', 0.9)')
+  gradient.addColorStop(0.3, light.color + ', 0.5)')
+  gradient.addColorStop(0.7, light.color + ', 0.1)')
+  gradient.addColorStop(1, light.color + ', 0)')
+
+  ctx.fillStyle = gradient
+
+  // let's draw this stuff
+  ctx.beginPath()
+  ctx.moveTo(points[0].x, points[0].y)
+  for (let i = 1; i < points.length; i++) {
+    ctx.lineTo(points[i].x, points[i].y)
+  }
+  ctx.closePath()
+  ctx.fill()
+}
+
+function drawWalls() {
+  ctx.strokeStyle = '#888'
+  ctx.lineWidth = 2
+
+  for (const wall of walls) {
+    if (wall.isBoundary) continue
+    ctx.beginPath()
+    ctx.moveTo(wall.a.x, wall.a.y)
+    ctx.lineTo(wall.b.x, wall.b.y)
+    ctx.stroke()
+  }
+}
+
+function drawLight(light) {
+  ctx.fillStyle = 'white'
+  ctx.beginPath()
+  ctx.arc(light.x, light.y, light.radius, 0, Math.PI * 2)
+  ctx.fill()
+
+  ctx.strokeStyle = 'black'
+  ctx.lineWidth = 1
+  ctx.stroke()
+}
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   ctx.globalCompositeOperation = 'lighter'
 
-  // drawRays(light)
-
   for (const light of lights) {
     drawLightArea(light)
   }
-
-  // drawLightArea(light)
 
   ctx.globalCompositeOperation = 'source-over'
 
@@ -249,33 +185,58 @@ function draw() {
   for (const light of lights) {
     drawLight(light)
   }
+}
 
-  // drawLight(light)
+let draggedLight = null
+
+function isMouseOnLight(mouseX, mouseY, light) {
+  const dx = mouseX - light.x
+  const dy = mouseY - light.y
+  return Math.hypot(dx, dy) <= light.radius
+}
+
+function getMousePos(e) {
+  const rect = canvas.getBoundingClientRect()
+  return {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top,
+  }
 }
 
 canvas.addEventListener('mousedown', (e) => {
-  const { x, y } = getMousePos(e)
-
-  if (isMouseOnLight(x, y, light)) {
-    isDraggingLight = true
+  const pos = getMousePos(e)
+  draggedLight = null
+  for (const light of lights) {
+    if (isMouseOnLight(pos.x, pos.y, light)) {
+      draggedLight = light
+      break
+    }
   }
 })
 
 canvas.addEventListener('mousemove', (e) => {
-  const { x, y } = getMousePos(e)
+  const pos = getMousePos(e)
 
-  // меняем курсор
-  canvas.style.cursor = isMouseOnLight(x, y, light) ? 'pointer' : 'default'
+  const hovered = lights.some((light) => isMouseOnLight(pos.x, pos.y, light))
+  canvas.style.cursor = hovered
+    ? draggedLight
+      ? 'grabbing'
+      : 'grab'
+    : 'default'
 
-  if (isDraggingLight) {
-    light.x = x
-    light.y = y
+  if (draggedLight) {
+    draggedLight.x = pos.x
+    draggedLight.y = pos.y
     draw()
   }
 })
 
 canvas.addEventListener('mouseup', () => {
-  isDraggingLight = false
+  draggedLight = null
+})
+
+canvas.addEventListener('mouseleave', () => {
+  draggedLight = null
 })
 
 draw()
