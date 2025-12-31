@@ -164,10 +164,14 @@ function drawLightArea(light) {
 }
 
 function drawLight(light) {
-  ctx.fillStyle = 'yellow'
+  ctx.fillStyle = 'white'
   ctx.beginPath()
   ctx.arc(light.x, light.y, light.radius, 0, Math.PI * 2)
   ctx.fill()
+
+  ctx.strokeStyle = 'black'
+  ctx.lineWidth = 1
+  ctx.stroke()
 }
 
 function isMouseOnLight(mouseX, mouseY, light) {
@@ -228,12 +232,25 @@ function raySegmentIntersection(rayOrigin, rayDir, a, b) {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+  ctx.globalCompositeOperation = 'lighter'
+
   // drawRays(light)
 
-  drawLightArea(light)
+  for (const light of lights) {
+    drawLightArea(light)
+  }
+
+  // drawLightArea(light)
+
+  ctx.globalCompositeOperation = 'source-over'
 
   drawWalls()
-  drawLight(light)
+
+  for (const light of lights) {
+    drawLight(light)
+  }
+
+  // drawLight(light)
 }
 
 canvas.addEventListener('mousedown', (e) => {
