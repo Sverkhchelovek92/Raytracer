@@ -128,10 +128,12 @@ function drawLightArea(light) {
   )
   // Gradient
 
-  gradient.addColorStop(0, light.color + ', 0.9)')
+  gradient.addColorStop(0.0, light.color + ', 1)')
+  gradient.addColorStop(0.1, light.color + ', 0.8)')
   gradient.addColorStop(0.3, light.color + ', 0.5)')
-  gradient.addColorStop(0.7, light.color + ', 0.1)')
-  gradient.addColorStop(1, light.color + ', 0)')
+  gradient.addColorStop(0.6, light.color + ', 0.2)')
+  gradient.addColorStop(0.9, light.color + ', 0.05)')
+  gradient.addColorStop(1.0, light.color + ', 0)')
 
   ctx.fillStyle = gradient
 
@@ -240,3 +242,21 @@ canvas.addEventListener('mouseleave', () => {
 })
 
 draw()
+
+// Modal Window Help Button Logic
+
+const helpButton = document.getElementById('help-button')
+const helpModal = document.getElementById('help-modal')
+
+helpButton.addEventListener('click', (e) => {
+  e.stopPropagation()
+  helpModal.style.display = 'flex'
+})
+
+helpModal.addEventListener('click', () => {
+  helpModal.style.display = 'none'
+})
+
+document.getElementById('help-content').addEventListener('click', (e) => {
+  e.stopPropagation()
+})

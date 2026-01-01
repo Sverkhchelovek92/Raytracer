@@ -5,6 +5,8 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
 canvas {
@@ -12,4 +14,67 @@ canvas {
   height: 90vh;
   background: #222;
   border: 1px solid #444;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Кнопка Help */
+#help-button {
+  position: fixed;
+  top: 5vh;
+  left: 2vw;
+  width: 2vw;
+  height: 5vh;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: 2px solid #555;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s;
+}
+
+#help-button:hover {
+  background: rgba(50, 50, 50, 0.8);
+  transform: scale(1.1);
+}
+
+/* Модальное окно с подсказкой */
+#help-modal {
+  display: none; /* скрыто по умолчанию */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+
+#help-content {
+  background: rgba(20, 20, 30, 0.95);
+  padding: 30px 40px;
+  border-radius: 16px;
+  border: 1px solid #555;
+  color: white;
+  max-width: 400px;
+  text-align: left;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+#help-content h2 {
+  margin-top: 0;
+  text-align: center;
+  color: #aaa;
+}
+
+#help-content ul {
+  line-height: 1.8;
 }

@@ -7,6 +7,23 @@
     <title>Raytracer</title>
   </head>
   <body>
+    <button id="help-button">?</button>
+
+    <div id="help-modal">
+      <div id="help-content">
+        <h2>Управление симулятором света</h2>
+        <ul>
+          <li><strong>Перетаскивание</strong> — зажми и тяни лампочку</li>
+          <li><strong>Добавить источник</strong> — двойной клик по сцене</li>
+          <li>
+            <strong>Нарисовать стену</strong>:<br />
+            &nbsp;&nbsp;• Правая кнопка мыши — начало стены<br />
+            &nbsp;&nbsp;• Левая кнопка мыши — конец стены
+          </li>
+          <li><strong>Цвета</strong> — новые источники меняют цвет по кругу</li>
+        </ul>
+      </div>
+    </div>
     <canvas id="canvas"></canvas>
     <script src="script.js"></script>
   </body>
