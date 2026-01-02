@@ -323,6 +323,8 @@ canvas.addEventListener('dblclick', (e) => {
   draw()
 })
 
+canvas.addEventListener('contextmenu', (e) => e.preventDefault())
+
 draw()
 
 // Modal Window Help Button Logic
