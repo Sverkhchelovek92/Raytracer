@@ -18,6 +18,16 @@ let walls = [
 let drawingWall = null
 let lastMousePos = { x: 0, y: 0 }
 
+const availableColors = [
+  'rgba(255, 240, 180',
+  'rgba(180, 220, 255',
+  'rgba(255, 180, 200',
+  'rgba(180, 255, 180',
+  'rgba(255, 200, 100',
+  'rgba(200, 180, 255',
+]
+let currentColorIndex = 0
+
 function updateLightsAndBoundaries() {
   // Update lights
   lights = [
@@ -288,6 +298,29 @@ canvas.addEventListener('mouseup', () => {
 
 canvas.addEventListener('mouseleave', () => {
   draggedLight = null
+})
+
+canvas.addEventListener('dblclick', (e) => {
+  const pos = getMousePos(e)
+
+  if (drawingWall) return
+
+  const onExistingLight = lights.some(
+    (light) => Math.hypot(pos.x - light.x, pos.y - light.y) <= light.radius
+  )
+  if (onExistingLight) return
+
+  lights.push({
+    x: pos.x,
+    y: pos.y,
+    color: availableColors[currentColorIndex],
+    range: 600,
+    rays: 1000,
+    radius: 14,
+  })
+
+  currentColorIndex = (currentColorIndex + 1) % availableColors.length
+  draw()
 })
 
 draw()
