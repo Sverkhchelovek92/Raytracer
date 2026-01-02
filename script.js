@@ -15,6 +15,9 @@ let walls = [
   // { a: { x: 250, y: 450 }, b: { x: 800, y: 465 } },
 ]
 
+let drawingWall = null
+let lastMousePos = { x: 0, y: 0 }
+
 function updateLightsAndBoundaries() {
   // Update lights
   lights = [
@@ -186,6 +189,18 @@ function draw() {
 
   for (const light of lights) {
     drawLight(light)
+  }
+
+  // Walls preview
+  if (drawingWall && lastMousePos) {
+    ctx.strokeStyle = '#aaa'
+    ctx.lineWidth = 3
+    ctx.setLineDash([10, 8])
+    ctx.beginPath()
+    ctx.moveTo(drawingWall.x, drawingWall.y)
+    ctx.lineTo(lastMousePos.x, lastMousePos.y)
+    ctx.stroke()
+    ctx.setLineDash([])
   }
 }
 

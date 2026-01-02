@@ -17,7 +17,6 @@ canvas {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
-/* Кнопка Help */
 #help-button {
   position: fixed;
   top: 5vh;
@@ -43,9 +42,8 @@ canvas {
   transform: scale(1.1);
 }
 
-/* Модальное окно с подсказкой */
 #help-modal {
-  display: none; /* скрыто по умолчанию */
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
