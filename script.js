@@ -222,6 +222,27 @@ function getMousePos(e) {
 
 canvas.addEventListener('mousedown', (e) => {
   const pos = getMousePos(e)
+
+  // Draw Walls
+  if (e.button === 2) {
+    drawingWall = { x: pos.x, y: pos.y }
+    e.preventDefault()
+    return
+  }
+
+  if (e.button === 0) {
+    if (drawingWall) {
+      walls.push({
+        a: { x: drawingWall.x, y: drawingWall.y },
+        b: { x: pos.x, y: pos.y },
+      })
+      drawingWall = null
+      draw()
+      return
+    }
+  }
+
+  // Drag Light
   draggedLight = null
   for (const light of lights) {
     if (isMouseOnLight(pos.x, pos.y, light)) {
@@ -233,17 +254,30 @@ canvas.addEventListener('mousedown', (e) => {
 
 canvas.addEventListener('mousemove', (e) => {
   const pos = getMousePos(e)
+  lastMousePos = pos
 
-  const hovered = lights.some((light) => isMouseOnLight(pos.x, pos.y, light))
-  canvas.style.cursor = hovered
-    ? draggedLight
-      ? 'grabbing'
-      : 'grab'
-    : 'default'
+  const hoveredLight = lights.some((light) =>
+    isMouseOnLight(pos.x, pos.y, light)
+  )
+
+  if (drawingWall) {
+    canvas.style.cursor = 'crosshair'
+  } else if (draggedLight) {
+    canvas.style.cursor = 'grabbing'
+  } else if (hoveredLight) {
+    canvas.style.cursor = 'grab'
+  } else {
+    canvas.style.cursor = 'default'
+  }
 
   if (draggedLight) {
     draggedLight.x = pos.x
     draggedLight.y = pos.y
+    draw()
+    return
+  }
+
+  if (drawingWall) {
     draw()
   }
 })
