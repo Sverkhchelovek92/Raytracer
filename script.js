@@ -230,6 +230,38 @@ function getMousePos(e) {
   }
 }
 
+function distanceToSegment(p, a, b) {
+  const dx = b.x - a.x
+  const dy = b.y - a.y
+  const len2 = dx * dx + dy * dy
+  if (len2 === 0) return Math.hypot(p.x - a.x, p.y - a.y)
+  let t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2
+  t = Math.max(0, Math.min(1, t))
+  const proj = { x: a.x + t * dx, y: a.y + t * dy }
+  return Math.hypot(p.x - proj.x, p.y - proj.y)
+}
+
+function findHoveredObject(pos) {
+  // Checking lights
+  for (let i = 0; i < lights.length; i++) {
+    if (isMouseOnLight(pos.x, pos.y, lights[i])) {
+      return { type: 'light', index: i }
+    }
+  }
+
+  // Checking walls
+  for (let i = 0; i < walls.length; i++) {
+    const wall = walls[i]
+    if (wall.isBoundary) continue
+    const dist = distanceToSegment(pos, wall.a, wall.b)
+    if (dist < 15) {
+      return { type: 'wall', index: i }
+    }
+  }
+
+  return null
+}
+
 canvas.addEventListener('mousedown', (e) => {
   const pos = getMousePos(e)
 
