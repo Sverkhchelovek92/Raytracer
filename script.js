@@ -30,24 +30,24 @@ let currentColorIndex = 0
 
 function updateLightsAndBoundaries() {
   // Update lights
-  lights = [
-    {
-      x: canvas.width / 4,
-      y: canvas.height / 2,
-      color: 'rgba(255, 240, 180',
-      range: 600,
-      rays: 1000,
-      radius: 14,
-    },
-    {
-      x: (canvas.width * 3) / 4,
-      y: canvas.height / 2,
-      color: 'rgba(180, 220, 255',
-      range: 600,
-      rays: 1000,
-      radius: 14,
-    },
-  ]
+  // lights = [
+  //   {
+  //     x: canvas.width / 4,
+  //     y: canvas.height / 2,
+  //     color: 'rgba(255, 240, 180',
+  //     range: 600,
+  //     rays: 1000,
+  //     radius: 14,
+  //   },
+  //   {
+  //     x: (canvas.width * 3) / 4,
+  //     y: canvas.height / 2,
+  //     color: 'rgba(180, 220, 255',
+  //     range: 600,
+  //     rays: 1000,
+  //     radius: 14,
+  //   },
+  // ]
   // Delete old walls
   walls = walls.filter((w) => !w.isBoundary)
 
@@ -70,6 +70,27 @@ window.addEventListener('resize', () => {
 
 resizeCanvas()
 updateLightsAndBoundaries()
+
+if (lights.length === 0) {
+  lights.push(
+    {
+      x: canvas.width / 4,
+      y: canvas.height / 2,
+      color: 'rgba(255, 240, 180',
+      range: 600,
+      rays: 1000,
+      radius: 14,
+    },
+    {
+      x: (canvas.width * 3) / 4,
+      y: canvas.height / 2,
+      color: 'rgba(255, 240, 180',
+      range: 600,
+      rays: 1000,
+      radius: 14,
+    }
+  )
+}
 
 function raySegmentIntersection(rayOrigin, rayDir, a, b) {
   const dx = b.x - a.x
@@ -161,7 +182,7 @@ function drawLightArea(light) {
 }
 
 function drawWalls() {
-  ctx.strokeStyle = '#888'
+  ctx.strokeStyle = '#000'
   ctx.lineWidth = 2
 
   for (const wall of walls) {
