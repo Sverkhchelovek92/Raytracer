@@ -301,6 +301,7 @@ canvas.addEventListener('mousemove', (e) => {
   const hoveredLight = lights.some((light) =>
     isMouseOnLight(pos.x, pos.y, light)
   )
+  const hoveredObject = findHoveredObject(pos)
 
   if (drawingWall) {
     canvas.style.cursor = 'crosshair'
@@ -308,6 +309,8 @@ canvas.addEventListener('mousemove', (e) => {
     canvas.style.cursor = 'grabbing'
   } else if (hoveredLight) {
     canvas.style.cursor = 'grab'
+  } else if (hoveredObject && hoveredObject.type === 'wall') {
+    canvas.style.cursor = 'pointer'
   } else {
     canvas.style.cursor = 'default'
   }
@@ -316,10 +319,7 @@ canvas.addEventListener('mousemove', (e) => {
     draggedLight.x = pos.x
     draggedLight.y = pos.y
     draw()
-    return
-  }
-
-  if (drawingWall) {
+  } else if (drawingWall) {
     draw()
   }
 })
@@ -353,6 +353,27 @@ canvas.addEventListener('dblclick', (e) => {
 
   currentColorIndex = (currentColorIndex + 1) % availableColors.length
   draw()
+})
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Delete' || e.key === 'Backspace') {
+    if (drawingWall) {
+      drawingWall = null
+      draw()
+      return
+    }
+
+    const obj = findHoveredObject(lastMousePos)
+    if (!obj) return
+
+    if (obj.type === 'light') {
+      lights.splice(obj.index, 1)
+    } else if (obj.type === 'wall') {
+      walls.splice(obj.index, 1)
+    }
+
+    draw()
+  }
 })
 
 canvas.addEventListener('contextmenu', (e) => e.preventDefault())
